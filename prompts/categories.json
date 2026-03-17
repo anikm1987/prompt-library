@@ -1,0 +1,6 @@
+[
+  { "name": "General", "icon": "📋" },
+  { "name": "Coding", "icon": "💻" },
+  { "name": "Writing", "icon": "✍️" },
+  { "name": "Analysis", "icon": "📊" }
+]
