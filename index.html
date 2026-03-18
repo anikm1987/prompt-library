@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src https://raw.githubusercontent.com https://api.github.com; img-src 'self' data:; font-src 'self';">
 <title>Prompt Library</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+@font-face { font-family: 'DM Serif Display'; font-style: normal; font-weight: 400; font-display: swap; src: local('DM Serif Display'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: local('JetBrains Mono'); }
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
@@ -25,21 +28,21 @@
   --danger-bg: rgba(192, 96, 96, 0.1);
   --success: #60a060;
   --success-bg: rgba(96, 160, 96, 0.1);
-  --suggest: #6ea4c8;
-  --suggest-bg: rgba(110, 164, 200, 0.1);
-  --suggest-border: rgba(110, 164, 200, 0.25);
   --tag-bg: rgba(200, 164, 110, 0.08);
   --tag-border: rgba(200, 164, 110, 0.2);
   --radius: 8px;
   --radius-lg: 14px;
   --shadow: 0 4px 24px rgba(0,0,0,0.3);
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
 }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -59,50 +62,38 @@ body::before {
 
 .app { position: relative; z-index: 1; }
 
-/* === HEADER === */
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 40px;
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(20px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 40px; border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100;
   background: rgba(14,15,19,0.85);
 }
 
 .logo { display: flex; align-items: center; gap: 14px; }
-
 .logo-icon {
   width: 38px; height: 38px; border-radius: 10px;
   background: linear-gradient(135deg, var(--accent), var(--accent-dim));
-  display: grid; place-items: center;
-  font-size: 18px; color: var(--bg); font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
+  display: grid; place-items: center; font-size: 18px; color: var(--bg);
+  font-weight: 700; font-family: var(--font-mono);
   box-shadow: 0 2px 12px rgba(200,164,110,0.25);
 }
-
-.logo h1 { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; letter-spacing: 0.5px; }
+.logo h1 { font-family: var(--font-display); font-size: 22px; font-weight: 400; letter-spacing: 0.5px; }
 .logo h1 span { color: var(--accent); }
 
 .header-actions { display: flex; gap: 10px; align-items: center; }
 
-/* === ROLE BADGE === */
 .role-badge {
   font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
   padding: 4px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px;
 }
 .role-badge.admin { background: var(--accent-glow); color: var(--accent); border: 1px solid var(--tag-border); }
-.role-badge.visitor { background: var(--suggest-bg); color: var(--suggest); border: 1px solid var(--suggest-border); }
+.role-badge.visitor { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border); }
 
-/* === BUTTONS === */
 .btn {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 9px 18px; border-radius: var(--radius);
   border: 1px solid var(--border); background: var(--surface);
-  color: var(--text); font-family: 'DM Sans', sans-serif;
+  color: var(--text); font-family: var(--font-body);
   font-size: 13.5px; font-weight: 500; cursor: pointer;
   transition: all var(--transition); white-space: nowrap;
 }
@@ -110,8 +101,6 @@ body::before {
 .btn svg { width: 16px; height: 16px; }
 .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dim)); border-color: var(--accent); color: var(--bg); font-weight: 600; }
 .btn-primary:hover { opacity: 0.9; box-shadow: 0 2px 16px rgba(200,164,110,0.3); }
-.btn-suggest { background: var(--suggest-bg); border-color: var(--suggest-border); color: var(--suggest); font-weight: 600; }
-.btn-suggest:hover { background: rgba(110,164,200,0.18); }
 .btn-danger { color: var(--danger); }
 .btn-danger:hover { background: var(--danger-bg); border-color: var(--danger); }
 .btn-sm { padding: 6px 12px; font-size: 12.5px; }
@@ -119,12 +108,9 @@ body::before {
 .btn-ghost:hover { background: var(--surface); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* === MAIN LAYOUT === */
 .main { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 73px); }
 
-/* === SIDEBAR === */
 .sidebar { border-right: 1px solid var(--border); padding: 20px 0; display: flex; flex-direction: column; overflow-y: auto; }
-
 .sidebar-title {
   font-size: 10.5px; font-weight: 600; text-transform: uppercase;
   letter-spacing: 1.5px; color: var(--text-muted); padding: 8px 16px;
@@ -152,24 +138,22 @@ body::before {
 .cat-actions button.del:hover { color:var(--danger); background:var(--danger-bg); }
 .cat-actions button svg { width:14px; height:14px; }
 
-/* === CONTENT === */
 .content { padding: 28px 36px; overflow-y: auto; }
-.content-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; gap: 16px; flex-wrap: wrap; }
-.content-header h2 { font-family:'DM Serif Display',serif; font-size:26px; font-weight:400; }
+.content-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
+.content-header h2 { font-family:var(--font-display); font-size:26px; font-weight:400; }
 
 .search-box { position:relative; width:280px; }
-.search-box input { width:100%; padding:9px 14px 9px 38px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13.5px; outline:none; transition:all var(--transition); }
+.search-box input { width:100%; padding:9px 14px 9px 38px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-family:var(--font-body); font-size:13.5px; outline:none; transition:all var(--transition); }
 .search-box input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
 .search-box input::placeholder { color:var(--text-muted); }
 .search-box svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-muted); }
 
-/* === PROMPT CARDS === */
 .prompts-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px; }
 
 .prompt-card {
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
   padding:22px; cursor:pointer; transition:all var(--transition);
-  display:flex; flex-direction:column; gap:12px; position: relative;
+  display:flex; flex-direction:column; gap:12px;
 }
 .prompt-card:hover { border-color:var(--border-light); background:var(--surface-hover); transform:translateY(-2px); box-shadow:var(--shadow); }
 
@@ -187,13 +171,12 @@ body::before {
 .prompt-card-actions button.del:hover { color:var(--danger); background:var(--danger-bg); }
 .prompt-card-actions button svg { width:15px; height:15px; }
 
-/* === MODALS === */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); z-index:200; display:grid; place-items:center; padding:20px; opacity:0; pointer-events:none; transition:opacity 0.25s ease; }
 .modal-overlay.active { opacity:1; pointer-events:all; }
 .modal { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); width:100%; max-width:620px; max-height:85vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.5); transform:translateY(10px) scale(0.98); transition:transform 0.25s ease; }
 .modal-overlay.active .modal { transform:translateY(0) scale(1); }
 .modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border); }
-.modal-header h3 { font-family:'DM Serif Display',serif; font-size:20px; font-weight:400; }
+.modal-header h3 { font-family:var(--font-display); font-size:20px; font-weight:400; }
 .modal-close { background:none; border:none; color:var(--text-muted); cursor:pointer; padding:6px; border-radius:6px; display:grid; place-items:center; transition:all var(--transition); }
 .modal-close:hover { color:var(--text); background:var(--surface-hover); }
 .modal-close svg { width:20px; height:20px; }
@@ -201,39 +184,29 @@ body::before {
 .modal-footer { display:flex; justify-content:flex-end; gap:10px; padding:16px 24px; border-top:1px solid var(--border); }
 
 .field label { display:block; font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px; }
-.field input, .field select, .field textarea { width:100%; padding:10px 14px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; transition:all var(--transition); }
+.field input, .field select, .field textarea { width:100%; padding:10px 14px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:14px; outline:none; transition:all var(--transition); }
 .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
-.field textarea { min-height:180px; resize:vertical; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; }
+.field textarea { min-height:180px; resize:vertical; font-family:var(--font-mono); font-size:13px; line-height:1.7; }
 .field input::placeholder, .field textarea::placeholder { color:var(--text-muted); }
 .field select { cursor:pointer; }
 .field select option { background:var(--surface); }
 .field small { display:block; color:var(--text-muted); font-size:11.5px; margin-top:6px; line-height:1.5; }
 
-/* === DETAIL VIEW === */
 .detail-content { padding:24px; }
-.detail-content h2 { font-family:'DM Serif Display',serif; font-size:24px; font-weight:400; margin-bottom:12px; }
+.detail-content h2 { font-family:var(--font-display); font-size:24px; font-weight:400; margin-bottom:12px; }
 .detail-meta { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
-.detail-prompt-text { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:18px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.8; color:var(--text-secondary); white-space:pre-wrap; word-break:break-word; position:relative; }
+.detail-prompt-text { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:18px; font-family:var(--font-mono); font-size:13px; line-height:1.8; color:var(--text-secondary); white-space:pre-wrap; word-break:break-word; position:relative; }
 .copy-btn { position:absolute; top:10px; right:10px; }
 
-/* === PR SUCCESS BANNER === */
-.pr-success { background:var(--success-bg); border:1px solid var(--success); border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; gap:12px; }
-.pr-success a { color:var(--suggest); text-decoration:underline; }
+.admin-panel { margin-top:auto; padding:16px; border-top:1px solid var(--border); }
+.admin-panel summary { font-size:12px; color:var(--text-muted); cursor:pointer; padding:4px 0; list-style:none; display:flex; align-items:center; gap:6px; }
+.admin-panel summary::-webkit-details-marker { display:none; }
+.admin-panel summary svg { width:14px; height:14px; }
+.admin-panel .admin-fields { padding-top:12px; display:flex; flex-direction:column; gap:10px; }
+.admin-panel input { width:100%; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:12.5px; font-family:var(--font-body); outline:none; }
+.admin-panel input:focus { border-color:var(--accent); }
+.admin-panel input::placeholder { color:var(--text-muted); }
 
-/* === ADMIN LOGIN INLINE === */
-.admin-panel { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
-.admin-panel summary {
-  font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 4px 0;
-  list-style: none; display: flex; align-items: center; gap: 6px;
-}
-.admin-panel summary::-webkit-details-marker { display: none; }
-.admin-panel summary svg { width: 14px; height: 14px; }
-.admin-panel .admin-fields { padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
-.admin-panel input { width: 100%; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 12.5px; font-family: 'DM Sans', sans-serif; outline: none; }
-.admin-panel input:focus { border-color: var(--accent); }
-.admin-panel input::placeholder { color: var(--text-muted); }
-
-/* === LOADING / EMPTY === */
 .spinner { width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.6s linear infinite; display:inline-block; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .loading-overlay { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 20px; gap:16px; color:var(--text-muted); }
@@ -243,7 +216,6 @@ body::before {
 .empty-state h3 { font-size:18px; margin-bottom:8px; color:var(--text-secondary); }
 .empty-state p { font-size:14px; margin-bottom:24px; }
 
-/* === TOAST === */
 .toast-container { position:fixed; bottom:24px; right:24px; z-index:400; display:flex; flex-direction:column; gap:8px; }
 .toast { padding:12px 20px; border-radius:var(--radius); background:var(--surface-active); border:1px solid var(--border); color:var(--text); font-size:13.5px; box-shadow:var(--shadow); animation:toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; display:flex; align-items:center; gap:8px; max-width:380px; }
 .toast.success { border-color:var(--success); }
@@ -251,7 +223,6 @@ body::before {
 @keyframes toastIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 @keyframes toastOut { to { opacity:0; transform:translateY(10px); } }
 
-/* === RESPONSIVE === */
 @media (max-width: 768px) {
   .main { grid-template-columns: 1fr; }
   .sidebar { display: none; }
@@ -273,11 +244,7 @@ body::before {
     </div>
     <div class="header-actions">
       <div id="roleBadge"></div>
-      <button class="btn btn-suggest" onclick="openSuggestPrompt()" id="suggestBtn" title="Suggest a prompt via Pull Request">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        Suggest Prompt
-      </button>
-      <button class="btn btn-primary" onclick="openNewPrompt()" id="newPromptBtn" style="display:none;">
+      <button class="btn btn-primary" id="newPromptBtn" style="display:none;" onclick="openNewPrompt()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New Prompt
       </button>
@@ -285,29 +252,26 @@ body::before {
   </header>
 
   <div class="main">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
       <div class="sidebar-title">
         Categories
-        <button onclick="openNewCategory()" id="addCatBtn" style="display:none;" title="Add category">
+        <button id="addCatBtn" style="display:none;" onclick="openNewCategory()" title="Add category">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
       </div>
       <div id="categoryList"></div>
 
-      <!-- Admin Login (collapsed in sidebar footer) -->
-      <div class="admin-panel" id="adminPanel">
+      <div class="admin-panel">
         <details id="adminDetails">
           <summary>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span id="adminToggleLabel">Admin Login</span>
+            <span id="adminToggleLabel">Admin login</span>
           </summary>
           <div class="admin-fields" id="adminFields">
-            <input type="password" id="adminToken" placeholder="GitHub token (ghp_...)" />
-            <button class="btn btn-primary btn-sm" onclick="adminLogin()" style="width:100%;justify-content:center;">
-              Unlock Admin
-            </button>
+            <input type="password" id="adminToken" placeholder="GitHub token (ghp_...)" autocomplete="off" />
+            <button class="btn btn-primary btn-sm" onclick="adminLogin()" style="width:100%;justify-content:center;">Unlock admin</button>
             <div style="font-size:10.5px;color:var(--text-muted);line-height:1.5;">
-              Token is kept in memory only — closing the tab erases it. Needs Contents read/write permission on this repo.
+              Token is kept in memory only — closing the tab erases it. Needs Contents read/write on this repo.
             </div>
           </div>
           <div id="adminLoggedIn" style="display:none;padding-top:12px;">
@@ -325,7 +289,6 @@ body::before {
     </aside>
 
     <section class="content">
-      <div id="prSuccessBanner" style="display:none;"></div>
       <div class="content-header">
         <h2 id="contentTitle">All Prompts</h2>
         <div class="search-box">
@@ -338,7 +301,7 @@ body::before {
   </div>
 </div>
 
-<!-- Admin: Prompt Create/Edit Modal -->
+<!-- Admin: Prompt Create/Edit -->
 <div class="modal-overlay" id="promptModal">
   <div class="modal">
     <div class="modal-header">
@@ -346,10 +309,10 @@ body::before {
       <button class="modal-close" onclick="closeModal('promptModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="field"><label>Title</label><input type="text" id="promptTitle" placeholder="e.g. Code Review Assistant" /></div>
+      <div class="field"><label>Title</label><input type="text" id="promptTitle" placeholder="e.g. Code Review Assistant" maxlength="200" /></div>
       <div class="field"><label>Category</label><select id="promptCategory"></select></div>
-      <div class="field"><label>Tags (comma separated)</label><input type="text" id="promptTags" placeholder="e.g. coding, review, quality" /></div>
-      <div class="field"><label>Prompt</label><textarea id="promptText" placeholder="Write your prompt here…"></textarea></div>
+      <div class="field"><label>Tags (comma separated)</label><input type="text" id="promptTags" placeholder="e.g. coding, review, quality" maxlength="500" /></div>
+      <div class="field"><label>Prompt</label><textarea id="promptText" placeholder="Write your prompt here…" maxlength="50000"></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('promptModal')">Cancel</button>
@@ -358,38 +321,7 @@ body::before {
   </div>
 </div>
 
-<!-- Visitor: Suggest Prompt Modal (creates PR) -->
-<div class="modal-overlay" id="suggestModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Suggest a Prompt</h3>
-      <button class="modal-close" onclick="closeModal('suggestModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div style="padding:12px 16px;background:var(--suggest-bg);border:1px solid var(--suggest-border);border-radius:var(--radius);font-size:13px;color:var(--suggest);line-height:1.6;">
-        Your suggestion will be submitted as a <strong>Pull Request</strong> on GitHub. The library owner will review and merge it before it appears here.
-      </div>
-      <div class="field">
-        <label>Your GitHub Token</label>
-        <input type="password" id="suggestToken" placeholder="ghp_... (needs public_repo scope)" />
-        <small>Required to fork the repo and open a PR on your behalf. Token is <strong>never stored</strong> — it's used once and discarded.</small>
-      </div>
-      <div class="field"><label>Title</label><input type="text" id="suggestTitle" placeholder="e.g. Email Writing Assistant" /></div>
-      <div class="field"><label>Category</label><select id="suggestCategory"></select></div>
-      <div class="field"><label>Tags (comma separated)</label><input type="text" id="suggestTags" placeholder="e.g. email, writing, professional" /></div>
-      <div class="field"><label>Prompt</label><textarea id="suggestText" placeholder="Write your prompt here…"></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('suggestModal')">Cancel</button>
-      <button class="btn btn-suggest" id="suggestSaveBtn" onclick="submitSuggestion()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
-        Submit Pull Request
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Admin: Category Modal -->
+<!-- Admin: Category -->
 <div class="modal-overlay" id="categoryModal">
   <div class="modal" style="max-width:400px;">
     <div class="modal-header">
@@ -397,7 +329,7 @@ body::before {
       <button class="modal-close" onclick="closeModal('categoryModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="field"><label>Category Name</label><input type="text" id="categoryName" placeholder="e.g. Writing" /></div>
+      <div class="field"><label>Category Name</label><input type="text" id="categoryName" placeholder="e.g. Writing" maxlength="50" /></div>
       <div class="field"><label>Emoji Icon</label><input type="text" id="categoryIcon" placeholder="e.g. ✍️" maxlength="4" style="width:80px;" /></div>
     </div>
     <div class="modal-footer">
@@ -407,7 +339,7 @@ body::before {
   </div>
 </div>
 
-<!-- Detail Modal -->
+<!-- Detail View -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal" style="max-width:680px;">
     <div class="modal-header">
@@ -422,18 +354,18 @@ body::before {
 
 <script>
 // ════════════════════════════════════════════════════════════
-//  CONFIGURATION — UPDATE THESE TWO VALUES FOR YOUR REPO
+//  CONFIGURATION — UPDATE THESE FOR YOUR REPO
 // ════════════════════════════════════════════════════════════
-const REPO_OWNER = 'anikm1987';   // ← your GitHub username
-const REPO_NAME  = 'prompt-library';  // ← your repository name
+const REPO_OWNER = 'YOUR_USERNAME';
+const REPO_NAME  = 'YOUR_REPO_NAME';
 const BRANCH     = 'main';
 // ════════════════════════════════════════════════════════════
 
 const RAW_BASE = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}`;
 const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 
-// ===== STATE =====
-let adminConfig = null;  // { token } — memory-only, never persisted
+// ===== STATE (memory-only, never persisted) =====
+let adminConfig = null;
 let categories = [];
 let prompts = [];
 let activeCategory = 'all';
@@ -442,26 +374,102 @@ let editingCategoryOld = null;
 
 function isAdmin() { return !!adminConfig; }
 
-// ═══════════════════════════════════════════
-//  PUBLIC READ — No auth needed (raw URLs)
-// ═══════════════════════════════════════════
+// ===== SECURITY: Schema validation =====
+function validatePrompt(p) {
+  if (!p || typeof p !== 'object') return false;
+  if (typeof p.id !== 'string' || p.id.length > 100) return false;
+  if (typeof p.title !== 'string' || p.title.length === 0 || p.title.length > 200) return false;
+  if (typeof p.category !== 'string' || p.category.length > 50) return false;
+  if (typeof p.text !== 'string' || p.text.length === 0 || p.text.length > 50000) return false;
+  if (p.tags && (!Array.isArray(p.tags) || p.tags.some(t => typeof t !== 'string' || t.length > 50))) return false;
+  if (p.tags && p.tags.length > 20) return false;
+  return true;
+}
+
+function validateCategory(c) {
+  if (!c || typeof c !== 'object') return false;
+  if (typeof c.name !== 'string' || c.name.length === 0 || c.name.length > 50) return false;
+  if (typeof c.icon !== 'string' || c.icon.length > 8) return false;
+  return true;
+}
+
+// ===== SECURITY: Safe text node creation (no innerHTML) =====
+function safeText(str) {
+  return document.createTextNode(String(str));
+}
+
+function el(tag, attrs, children) {
+  const e = document.createElement(tag);
+  if (attrs) Object.entries(attrs).forEach(([k, v]) => {
+    if (k === 'onclick') e.addEventListener('click', v);
+    else if (k === 'className') e.className = v;
+    else if (k === 'textContent') e.textContent = v;
+    else e.setAttribute(k, v);
+  });
+  if (children) {
+    (Array.isArray(children) ? children : [children]).forEach(c => {
+      if (typeof c === 'string') e.appendChild(safeText(c));
+      else if (c) e.appendChild(c);
+    });
+  }
+  return e;
+}
+
+function svgIcon(paths, w = 16, h = 16) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('width', String(w));
+  svg.setAttribute('height', String(h));
+  paths.forEach(d => {
+    const p = document.createElementNS(ns, typeof d === 'object' ? d.tag : 'path');
+    if (typeof d === 'object') Object.entries(d).forEach(([k, v]) => { if (k !== 'tag') p.setAttribute(k, v); });
+    else p.setAttribute('d', d);
+    svg.appendChild(p);
+  });
+  return svg;
+}
+
+// ===== PUBLIC READ =====
 async function fetchPublicJSON(path) {
   const res = await fetch(`${RAW_BASE}/${path}?t=${Date.now()}`);
   if (!res.ok) return null;
-  return res.json();
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(e) { return null; }
 }
 
 async function loadPublicData() {
   const grid = document.getElementById('promptsGrid');
-  grid.innerHTML = '<div class="loading-overlay" style="grid-column:1/-1;"><div class="spinner"></div>Loading prompts…</div>';
+  grid.textContent = '';
+  const loader = el('div', { className: 'loading-overlay', style: 'grid-column:1/-1;' }, [
+    el('div', { className: 'spinner' }),
+    'Loading prompts…'
+  ]);
+  grid.appendChild(loader);
 
   try {
     const [cats, idx] = await Promise.all([
       fetchPublicJSON('prompts/categories.json'),
       fetchPublicJSON('prompts/index.json')
     ]);
-    categories = cats || [{ name: 'General', icon: '📋' }];
-    prompts = idx || [];
+
+    // Validate categories
+    if (Array.isArray(cats)) {
+      categories = cats.filter(validateCategory);
+    } else {
+      categories = [{ name: 'General', icon: '📋' }];
+    }
+
+    // Validate prompts
+    if (Array.isArray(idx)) {
+      prompts = idx.filter(validatePrompt);
+    } else {
+      prompts = [];
+    }
   } catch(e) {
     categories = [{ name: 'General', icon: '📋' }];
     prompts = [];
@@ -472,9 +480,7 @@ async function loadPublicData() {
   renderPrompts();
 }
 
-// ═══════════════════════════════════════════
-//  ADMIN WRITE — GitHub API (authenticated)
-// ═══════════════════════════════════════════
+// ===== ADMIN WRITE =====
 function ghAPI(path, opts = {}) {
   return fetch(`${API_BASE}/contents/${path}`, {
     ...opts,
@@ -514,24 +520,28 @@ async function deleteGHFile(path, message) {
 async function saveCategoriesToRepo() { await writeFile('prompts/categories.json', JSON.stringify(categories, null, 2), 'Update categories'); }
 async function saveIndexToRepo() { await writeFile('prompts/index.json', JSON.stringify(prompts, null, 2), 'Update prompt index'); }
 
-// ═══════════════════════════════════════════
-//  ADMIN LOGIN / LOGOUT
-// ═══════════════════════════════════════════
+// ===== ADMIN LOGIN/LOGOUT =====
 async function adminLogin() {
   const token = document.getElementById('adminToken').value.trim();
   if (!token) { toast('Enter your GitHub token', 'error'); return; }
+
+  // Validate token format
+  if (!/^(ghp_|github_pat_)[A-Za-z0-9_]+$/.test(token)) {
+    toast('Invalid token format', 'error');
+    return;
+  }
 
   try {
     const res = await fetch(API_BASE, { headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' } });
     if (!res.ok) throw new Error('Invalid token or no repo access');
     const data = await res.json();
     if (!data.permissions || !data.permissions.push) {
-      toast('Token needs write (push) access to this repo', 'error');
+      toast('Token needs write (push) access', 'error');
       return;
     }
   } catch(e) { toast('Auth failed: ' + e.message, 'error'); return; }
 
-  adminConfig = { token };
+  adminConfig = Object.freeze({ token });
   document.getElementById('adminFields').style.display = 'none';
   document.getElementById('adminLoggedIn').style.display = 'block';
   document.getElementById('adminToggleLabel').textContent = 'Admin';
@@ -543,7 +553,7 @@ function adminLogout() {
   adminConfig = null;
   document.getElementById('adminFields').style.display = 'flex';
   document.getElementById('adminLoggedIn').style.display = 'none';
-  document.getElementById('adminToggleLabel').textContent = 'Admin Login';
+  document.getElementById('adminToggleLabel').textContent = 'Admin login';
   document.getElementById('adminToken').value = '';
   updateUIForRole();
   toast('Disconnected', 'success');
@@ -551,54 +561,56 @@ function adminLogout() {
 
 function updateUIForRole() {
   const badge = document.getElementById('roleBadge');
-  const newBtn = document.getElementById('newPromptBtn');
-  const addCatBtn = document.getElementById('addCatBtn');
+  badge.textContent = '';
+  const span = el('span', { className: isAdmin() ? 'role-badge admin' : 'role-badge visitor', textContent: isAdmin() ? '🔑 Admin' : '👁 Visitor' });
+  badge.appendChild(span);
 
-  if (isAdmin()) {
-    badge.innerHTML = '<span class="role-badge admin">🔑 Admin</span>';
-    newBtn.style.display = 'inline-flex';
-    addCatBtn.style.display = 'block';
-  } else {
-    badge.innerHTML = '<span class="role-badge visitor">👁 Visitor</span>';
-    newBtn.style.display = 'none';
-    addCatBtn.style.display = 'none';
-  }
+  document.getElementById('newPromptBtn').style.display = isAdmin() ? 'inline-flex' : 'none';
+  document.getElementById('addCatBtn').style.display = isAdmin() ? 'block' : 'none';
   renderCategories();
   renderPrompts();
 }
 
-// ═══════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════
+// ===== RENDER (DOM-based, no innerHTML) =====
 function renderCategories() {
-  const el = document.getElementById('categoryList');
-  const allCount = prompts.length;
+  const container = document.getElementById('categoryList');
+  container.textContent = '';
 
-  let html = `<div class="cat-item ${activeCategory==='all'?'active':''}" onclick="selectCategory('all')">
-    <span>📚</span> All Prompts <span class="count">${allCount}</span>
-  </div>`;
+  // All item
+  const allCount = prompts.length;
+  const allItem = el('div', { className: 'cat-item' + (activeCategory === 'all' ? ' active' : ''), onclick: () => selectCategory('all') }, [
+    el('span', null, '📚'), ' All Prompts ',
+    el('span', { className: 'count', textContent: String(allCount) })
+  ]);
+  container.appendChild(allItem);
 
   categories.forEach(cat => {
     const count = prompts.filter(p => p.category === cat.name).length;
-    const adminActions = isAdmin() ? `
-      <span class="cat-actions">
-        <button onclick="event.stopPropagation();editCategory('${esc(cat.name)}')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="del" onclick="event.stopPropagation();deleteCategory('${esc(cat.name)}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5-3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z"/></svg></button>
-      </span>` : '';
+    const item = el('div', { className: 'cat-item' + (activeCategory === cat.name ? ' active' : ''), onclick: () => selectCategory(cat.name) }, [
+      el('span', null, cat.icon), ' ' + cat.name + ' ',
+      el('span', { className: 'count', textContent: String(count) })
+    ]);
 
-    html += `<div class="cat-item ${activeCategory===cat.name?'active':''}" onclick="selectCategory('${esc(cat.name)}')">
-      <span>${cat.icon}</span> ${esc(cat.name)}
-      <span class="count">${count}</span>
-      ${adminActions}
-    </div>`;
+    if (isAdmin()) {
+      const actions = el('span', { className: 'cat-actions' });
+      const editBtn = el('button', { title: 'Edit', onclick: (e) => { e.stopPropagation(); editCategory(cat.name); } });
+      editBtn.appendChild(svgIcon([{tag:'path',d:'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'},{tag:'path',d:'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'}], 14, 14));
+      const delBtn = el('button', { className: 'del', title: 'Delete', onclick: (e) => { e.stopPropagation(); deleteCategory(cat.name); } });
+      delBtn.appendChild(svgIcon([{tag:'polyline',points:'3 6 5 6 21 6'},{tag:'path',d:'M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5-3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z'}], 14, 14));
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+      item.appendChild(actions);
+    }
+
+    container.appendChild(item);
   });
 
-  el.innerHTML = html;
-  populateCategorySelects();
+  populateCategorySelect();
 }
 
 function renderPrompts() {
   const grid = document.getElementById('promptsGrid');
+  grid.textContent = '';
   const search = document.getElementById('searchInput').value.toLowerCase();
   let filtered = prompts;
 
@@ -606,53 +618,64 @@ function renderPrompts() {
   if (search) filtered = filtered.filter(p =>
     p.title.toLowerCase().includes(search) ||
     p.text.toLowerCase().includes(search) ||
-    (p.tags||[]).some(t => t.toLowerCase().includes(search))
+    (p.tags || []).some(t => t.toLowerCase().includes(search))
   );
 
   document.getElementById('contentTitle').textContent = activeCategory === 'all' ? 'All Prompts' : activeCategory;
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="12" y2="13"/></svg>
-      <h3>No prompts yet</h3>
-      <p>${isAdmin() ? 'Create your first prompt to get started.' : 'The library is empty. Be the first to suggest a prompt!'}</p>
-      ${isAdmin()
-        ? '<button class="btn btn-primary" onclick="openNewPrompt()">New Prompt</button>'
-        : '<button class="btn btn-suggest" onclick="openSuggestPrompt()">Suggest Prompt</button>'}
-    </div>`;
+    const empty = el('div', { className: 'empty-state', style: 'grid-column:1/-1;' });
+    empty.appendChild(svgIcon([{tag:'rect',x:'2',y:'3',width:'20',height:'18',rx:'2'},{tag:'line',x1:'8',y1:'9',x2:'16',y2:'9'},{tag:'line',x1:'8',y1:'13',x2:'12',y2:'13'}], 48, 48));
+    empty.appendChild(el('h3', null, 'No prompts yet'));
+    empty.appendChild(el('p', null, isAdmin() ? 'Create your first prompt to get started.' : 'The library is empty.'));
+    if (isAdmin()) {
+      const btn = el('button', { className: 'btn btn-primary', onclick: openNewPrompt, textContent: 'New Prompt' });
+      empty.appendChild(btn);
+    }
+    grid.appendChild(empty);
     return;
   }
 
-  grid.innerHTML = filtered.map(p => {
-    const adminBtns = isAdmin() ? `
-      <div class="prompt-card-actions">
-        <button onclick="event.stopPropagation();editPrompt('${p.id}')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="del" onclick="event.stopPropagation();deletePrompt('${p.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5-3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z"/></svg></button>
-      </div>` : '';
+  filtered.forEach(p => {
+    const card = el('div', { className: 'prompt-card', onclick: () => viewPrompt(p.id) });
+    const top = el('div', { className: 'prompt-card-top' });
+    top.appendChild(el('h3', null, p.title));
 
-    return `<div class="prompt-card" onclick="viewPrompt('${p.id}')">
-      <div class="prompt-card-top"><h3>${esc(p.title)}</h3>${adminBtns}</div>
-      <div class="desc">${esc(p.text)}</div>
-      <div class="tags">
-        <span class="tag">${esc(p.category)}</span>
-        ${(p.tags||[]).map(t => `<span class="tag tag-plain">${esc(t)}</span>`).join('')}
-      </div>
-    </div>`;
-  }).join('');
+    if (isAdmin()) {
+      const actions = el('div', { className: 'prompt-card-actions' });
+      const editBtn = el('button', { title: 'Edit', onclick: (e) => { e.stopPropagation(); editPrompt(p.id); } });
+      editBtn.appendChild(svgIcon([{tag:'path',d:'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'},{tag:'path',d:'M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'}], 15, 15));
+      const delBtn = el('button', { className: 'del', title: 'Delete', onclick: (e) => { e.stopPropagation(); deletePrompt(p.id); } });
+      delBtn.appendChild(svgIcon([{tag:'polyline',points:'3 6 5 6 21 6'},{tag:'path',d:'M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5-3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z'}], 15, 15));
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+      top.appendChild(actions);
+    }
+
+    card.appendChild(top);
+    card.appendChild(el('div', { className: 'desc', textContent: p.text }));
+
+    const tags = el('div', { className: 'tags' });
+    tags.appendChild(el('span', { className: 'tag', textContent: p.category }));
+    (p.tags || []).forEach(t => tags.appendChild(el('span', { className: 'tag tag-plain', textContent: t })));
+    card.appendChild(tags);
+
+    grid.appendChild(card);
+  });
 }
 
 function selectCategory(name) { activeCategory = name; renderCategories(); renderPrompts(); }
 
-function populateCategorySelects() {
-  ['promptCategory', 'suggestCategory'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = categories.map(c => `<option value="${esc(c.name)}">${c.icon} ${esc(c.name)}</option>`).join('');
+function populateCategorySelect() {
+  const sel = document.getElementById('promptCategory');
+  if (!sel) return;
+  sel.textContent = '';
+  categories.forEach(c => {
+    sel.appendChild(el('option', { value: c.name, textContent: c.icon + ' ' + c.name }));
   });
 }
 
-// ═══════════════════════════════════════════
-//  ADMIN — PROMPT CRUD (direct commits)
-// ═══════════════════════════════════════════
+// ===== ADMIN: PROMPT CRUD =====
 function openNewPrompt() {
   if (!isAdmin()) return;
   editingPromptId = null;
@@ -661,7 +684,7 @@ function openNewPrompt() {
   document.getElementById('promptTags').value = '';
   document.getElementById('promptText').value = '';
   document.getElementById('promptSaveBtn').textContent = 'Save Prompt';
-  populateCategorySelects();
+  populateCategorySelect();
   if (activeCategory !== 'all') document.getElementById('promptCategory').value = activeCategory;
   openModal('promptModal');
 }
@@ -673,10 +696,10 @@ function editPrompt(id) {
   editingPromptId = id;
   document.getElementById('promptModalTitle').textContent = 'Edit Prompt';
   document.getElementById('promptTitle').value = p.title;
-  document.getElementById('promptTags').value = (p.tags||[]).join(', ');
+  document.getElementById('promptTags').value = (p.tags || []).join(', ');
   document.getElementById('promptText').value = p.text;
   document.getElementById('promptSaveBtn').textContent = 'Update Prompt';
-  populateCategorySelects();
+  populateCategorySelect();
   document.getElementById('promptCategory').value = p.category;
   openModal('promptModal');
 }
@@ -685,17 +708,23 @@ async function savePrompt() {
   if (!isAdmin()) return;
   const title = document.getElementById('promptTitle').value.trim();
   const category = document.getElementById('promptCategory').value;
-  const tags = document.getElementById('promptTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const tags = document.getElementById('promptTags').value.split(',').map(t => t.trim()).filter(Boolean).slice(0, 20);
   const text = document.getElementById('promptText').value.trim();
+
   if (!title || !text) { toast('Title and prompt text are required', 'error'); return; }
+  if (title.length > 200) { toast('Title too long (max 200 chars)', 'error'); return; }
 
   const btn = document.getElementById('promptSaveBtn');
-  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true;
+  btn.innerHTML = ''; btn.appendChild(el('span', { className: 'spinner' })); btn.appendChild(safeText(' Saving…'));
+  btn.disabled = true;
 
   try {
     const id = editingPromptId || 'prompt_' + Date.now();
     const slug = id.replace(/[^a-z0-9_]/gi, '_');
     const data = { id, title, category, tags, text, updatedAt: new Date().toISOString() };
+
+    if (!validatePrompt(data)) { toast('Invalid prompt data', 'error'); return; }
+
     await writeFile(`prompts/${slug}.json`, JSON.stringify(data, null, 2), editingPromptId ? `Update: ${title}` : `Add: ${title}`);
     const idx = prompts.findIndex(p => p.id === id);
     if (idx >= 0) prompts[idx] = data; else prompts.unshift(data);
@@ -711,7 +740,7 @@ async function savePrompt() {
 async function deletePrompt(id) {
   if (!isAdmin() || !confirm('Delete this prompt?')) return;
   try {
-    await deleteGHFile(`prompts/${id.replace(/[^a-z0-9_]/gi,'_')}.json`, `Delete: ${id}`);
+    await deleteGHFile(`prompts/${id.replace(/[^a-z0-9_]/gi, '_')}.json`, `Delete: ${id}`);
     prompts = prompts.filter(p => p.id !== id);
     await saveIndexToRepo();
     renderCategories(); renderPrompts();
@@ -720,9 +749,7 @@ async function deletePrompt(id) {
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
 
-// ═══════════════════════════════════════════
-//  ADMIN — CATEGORY CRUD
-// ═══════════════════════════════════════════
+// ===== ADMIN: CATEGORY CRUD =====
 function openNewCategory() {
   if (!isAdmin()) return;
   editingCategoryOld = null;
@@ -748,6 +775,9 @@ async function saveCategory() {
   const name = document.getElementById('categoryName').value.trim();
   const icon = document.getElementById('categoryIcon').value.trim() || '📁';
   if (!name) { toast('Name required', 'error'); return; }
+  if (name.length > 50) { toast('Name too long', 'error'); return; }
+
+  if (!validateCategory({ name, icon })) { toast('Invalid category', 'error'); return; }
 
   try {
     if (editingCategoryOld) {
@@ -781,170 +811,50 @@ async function deleteCategory(name) {
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
 
-// ═══════════════════════════════════════════
-//  VISITOR — SUGGEST PROMPT (Fork → Branch → Commit → PR)
-// ═══════════════════════════════════════════
-function openSuggestPrompt() {
-  document.getElementById('suggestTitle').value = '';
-  document.getElementById('suggestTags').value = '';
-  document.getElementById('suggestText').value = '';
-  populateCategorySelects();
-  openModal('suggestModal');
-}
-
-async function submitSuggestion() {
-  const token = document.getElementById('suggestToken').value.trim();
-  const title = document.getElementById('suggestTitle').value.trim();
-  const category = document.getElementById('suggestCategory').value;
-  const tags = document.getElementById('suggestTags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  const text = document.getElementById('suggestText').value.trim();
-
-  if (!token) { toast('GitHub token is required to create a PR', 'error'); return; }
-  if (!title || !text) { toast('Title and prompt text are required', 'error'); return; }
-
-  const btn = document.getElementById('suggestSaveBtn');
-  btn.innerHTML = '<span class="spinner"></span> Creating PR…'; btn.disabled = true;
-
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    'Accept': 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
-  };
-
-  try {
-    // 1) Who am I?
-    const userRes = await fetch('https://api.github.com/user', { headers });
-    if (!userRes.ok) throw new Error('Invalid token');
-    const user = await userRes.json();
-
-    // 2) Fork (idempotent)
-    toast('Forking repository…', '');
-    await fetch(`${API_BASE}/forks`, { method: 'POST', headers });
-    await new Promise(r => setTimeout(r, 3000)); // wait for GitHub to provision
-
-    // 3) Get base SHA from fork
-    const forkAPI = `https://api.github.com/repos/${user.login}/${REPO_NAME}`;
-
-    // Sync fork with upstream first
-    try {
-      await fetch(`${forkAPI}/merge-upstream`, {
-        method: 'POST', headers,
-        body: JSON.stringify({ branch: BRANCH })
-      });
-    } catch(e) { /* ok if fails */ }
-
-    const branchRes = await fetch(`${forkAPI}/git/refs/heads/${BRANCH}`, { headers });
-    if (!branchRes.ok) throw new Error('Could not read fork — try again in a few seconds');
-    const baseSHA = (await branchRes.json()).object.sha;
-
-    // 4) New branch
-    const branchName = `suggest-${Date.now()}`;
-    const nbRes = await fetch(`${forkAPI}/git/refs`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha: baseSHA })
-    });
-    if (!nbRes.ok) throw new Error('Could not create branch');
-
-    // 5) Write prompt file + updated index
-    const id = 'prompt_' + Date.now();
-    const slug = id.replace(/[^a-z0-9_]/gi, '_');
-    const promptData = { id, title, category, tags, text, suggestedBy: user.login, suggestedAt: new Date().toISOString() };
-
-    // prompt file
-    const pfRes = await fetch(`${forkAPI}/contents/prompts/${slug}.json`, {
-      method: 'PUT', headers,
-      body: JSON.stringify({ message: `Add suggested prompt: ${title}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(promptData, null, 2)))), branch: branchName })
-    });
-    if (!pfRes.ok) throw new Error('Could not write prompt file');
-
-    // updated index
-    const newIndex = [promptData, ...prompts];
-    let idxSha = null;
-    try {
-      const idxCheck = await fetch(`${forkAPI}/contents/prompts/index.json?ref=${branchName}`, { headers });
-      if (idxCheck.ok) idxSha = (await idxCheck.json()).sha;
-    } catch(e) {}
-    const idxBody = { message: `Update index with: ${title}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(newIndex, null, 2)))), branch: branchName };
-    if (idxSha) idxBody.sha = idxSha;
-    await fetch(`${forkAPI}/contents/prompts/index.json`, { method: 'PUT', headers, body: JSON.stringify(idxBody) });
-
-    // 6) Create PR
-    toast('Opening pull request…', '');
-    const prRes = await fetch(`${API_BASE}/pulls`, {
-      method: 'POST', headers,
-      body: JSON.stringify({
-        title: `[Suggestion] ${title}`,
-        body: `## Suggested Prompt\n\n**Title:** ${title}\n**Category:** ${category}\n**Tags:** ${tags.join(', ')}\n\n---\n\n\`\`\`\n${text}\n\`\`\`\n\n---\n*Submitted via Prompt Library by @${user.login}*`,
-        head: `${user.login}:${branchName}`,
-        base: BRANCH
-      })
-    });
-
-    if (!prRes.ok) throw new Error((await prRes.json()).message || 'PR creation failed');
-    const pr = await prRes.json();
-
-    closeModal('suggestModal');
-    const banner = document.getElementById('prSuccessBanner');
-    banner.style.display = 'block';
-    banner.innerHTML = `<div class="pr-success">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="24" height="24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <div>
-        <strong style="color:var(--text);">Prompt suggested successfully!</strong><br>
-        <span style="color:var(--text-secondary);font-size:13px;">Pull Request awaiting review: <a href="${pr.html_url}" target="_blank" rel="noopener">PR #${pr.number}</a></span>
-      </div>
-    </div>`;
-
-    toast('Pull request created!', 'success');
-
-  } catch(e) {
-    toast('Error: ' + e.message, 'error');
-  }
-
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg> Submit Pull Request';
-  btn.disabled = false;
-}
-
-// ═══════════════════════════════════════════
-//  DETAIL VIEW
-// ═══════════════════════════════════════════
+// ===== DETAIL VIEW (DOM-based) =====
 function viewPrompt(id) {
   const p = prompts.find(x => x.id === id);
   if (!p) return;
-  const adminBtns = isAdmin() ? `
-    <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn btn-sm" onclick="editPrompt('${p.id}');closeModal('detailModal');">Edit</button>
-      <button class="btn btn-sm btn-danger" onclick="deletePrompt('${p.id}');">Delete</button>
-    </div>` : '';
+  const container = document.getElementById('detailContent');
+  container.textContent = '';
 
-  document.getElementById('detailContent').innerHTML = `
-    <h2>${esc(p.title)}</h2>
-    <div class="detail-meta">
-      <span class="tag">${esc(p.category)}</span>
-      ${(p.tags||[]).map(t => `<span class="tag tag-plain">${esc(t)}</span>`).join('')}
-    </div>
-    <div class="detail-prompt-text">
-      <button class="btn btn-sm btn-ghost copy-btn" onclick="copyText(this,'${p.id}')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy
-      </button>
-      ${esc(p.text)}
-    </div>
-    ${adminBtns}`;
+  container.appendChild(el('h2', null, p.title));
+
+  const meta = el('div', { className: 'detail-meta' });
+  meta.appendChild(el('span', { className: 'tag', textContent: p.category }));
+  (p.tags || []).forEach(t => meta.appendChild(el('span', { className: 'tag tag-plain', textContent: t })));
+  container.appendChild(meta);
+
+  const textBox = el('div', { className: 'detail-prompt-text' });
+  const copyBtn = el('button', { className: 'btn btn-sm btn-ghost copy-btn', onclick: () => copyPromptText(copyBtn, p.text) });
+  copyBtn.appendChild(svgIcon([{tag:'rect',x:'9',y:'9',width:'13',height:'13',rx:'2'},{tag:'path',d:'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'}], 14, 14));
+  copyBtn.appendChild(safeText(' Copy'));
+  textBox.appendChild(copyBtn);
+  textBox.appendChild(safeText(p.text));
+  container.appendChild(textBox);
+
+  if (isAdmin()) {
+    const actions = el('div', { style: 'margin-top:16px;display:flex;gap:8px;justify-content:flex-end;' });
+    actions.appendChild(el('button', { className: 'btn btn-sm', textContent: 'Edit', onclick: () => { editPrompt(p.id); closeModal('detailModal'); } }));
+    actions.appendChild(el('button', { className: 'btn btn-sm btn-danger', textContent: 'Delete', onclick: () => deletePrompt(p.id) }));
+    container.appendChild(actions);
+  }
+
   openModal('detailModal');
 }
 
-function copyText(btn, id) {
-  const p = prompts.find(x => x.id === id);
-  if (!p) return;
-  navigator.clipboard.writeText(p.text).then(() => {
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-    setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy'; }, 1500);
+function copyPromptText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.textContent = '';
+      btn.appendChild(svgIcon([{tag:'rect',x:'9',y:'9',width:'13',height:'13',rx:'2'},{tag:'path',d:'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'}], 14, 14));
+      btn.appendChild(safeText(' Copy'));
+    }, 1500);
   });
 }
 
-// ═══════════════════════════════════════════
-//  MODALS & UTILS
-// ═══════════════════════════════════════════
+// ===== MODALS & UTILS =====
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
@@ -955,19 +865,17 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
 });
 
-function esc(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-
-function toast(msg, type = '') {
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.textContent = msg;
-  document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => el.remove(), 3200);
+function toast(msg, type) {
+  const t = el('div', { className: 'toast ' + (type || ''), textContent: msg });
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => t.remove(), 3200);
 }
 
-// ═══════════════════════════════════════════
-//  BOOT
-// ═══════════════════════════════════════════
+// ===== SECURITY: Clear token on unload =====
+window.addEventListener('beforeunload', () => { adminConfig = null; });
+window.addEventListener('pagehide', () => { adminConfig = null; });
+
+// ===== BOOT =====
 updateUIForRole();
 loadPublicData();
 </script>
